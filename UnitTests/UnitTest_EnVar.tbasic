@@ -1,0 +1,99 @@
+Uses "EnVar"
+Uses "Console", "File"      
+
+#INCLUDE "unitTesting.tBasicU"
+
+$FILE_INI = APP_SourcePath + "test.ini"
+
+' -- Main body of our testing engine
+Function TBMain()
+  
+  ' -- Initialize testing engine
+  ut_Initialize()
+ 
+  ' -- Automatically launch all possible tests
+  ut_LaunchTests()      
+ 
+  ' -- Report failures found in report, if any
+  Long nFailures = ut_GetFailureCount()
+  Long i
+   
+  If nFailures Then   
+    PrintL  
+     
+    For i = 1 To nFailures
+      PrintL "#"+i
+      PrintL "Test:        " + ut_GetFailureTestName(i)
+      PrintL "Assert:      " + ut_GetFailureAssertType(i)
+      PrintL "Description: " + ut_GetFailureDescription(i)
+      PrintL "Comment:     " + ut_GetFailureComment(i)
+      PrintL
+    Next
+  Else
+    PrintL "PASSED" 
+  End If             
+   
+  ' -- Save results to default file
+  ut_SaveLog()
+   
+  ' -- Release engine
+  ut_Release()
+   
+  WaitKey
+ 
+End Function          
+
+Function test_Teardown()
+  enVar_Remove("enVarUnitTest")
+End Function
+
+' -----------------------------------------------------------------------------
+
+Function test_List_CalledWithoutSeparator_GotSeparatedByCommas()
+
+  ut_assertIsGreater(Tally(enVar_List, ","), 0)
+  
+End Function
+
+Function test_List_CalledWithSemicolonSeparator_GotSeparatedBySemicolons()
+
+  ut_assertIsGreater(Tally(enVar_List(";"), ";"), 0)
+  
+End Function
+
+Function test_Set_PairPassed_PairStored()
+
+  enVar_Set("enVarUnitTest", "Got saved")
+  ut_assertIsGreater(InStr(enVar_List, ",enVarUnitTest,"), 0)
+  
+End Function
+
+Function test_Get_PairPassed_PairRead()
+
+  enVar_Set ("enVarUnitTest", "Got saved")
+  ut_assertEqualText(enVar_Get("enVarUnitTest"), "Got saved")
+  
+End Function
+
+Function test_Remove_FirstPassed_NoLongerPresent()
+  
+  String myVar = Parse$(enVar_List, ",", 1)
+  
+  enVar_Remove myVar
+
+  ut_assertEqual(InStr(enVar_List, myVar+","), 0)
+  
+End Function
+
+Function test_Exists_ExistingQueried_Found()
+  
+  enVar_Set("enVarUnitTest", "Got saved")  
+  ut_assertIsTrue(enVar_Exists("enVarUnitTest"))
+  
+End Function
+
+Function test_Exists_NonExistingQueried_NotFound()
+  
+  ut_assertIsFalse(enVar_Exists("enVarUnitTest"))
+  
+End Function
