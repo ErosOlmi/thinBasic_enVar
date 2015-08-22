@@ -1,0 +1,4 @@
+*.bas linguist-language=PowerBasic
+*.inc linguist-language=PowerBasic
+*.tBasic linguist-language=thinBasic
+*.tBasicU linguist-language=thinBasic
