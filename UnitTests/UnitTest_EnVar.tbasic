@@ -3,8 +3,6 @@ Uses "Console", "File"
 
 #INCLUDE "unitTesting.tBasicU"
 
-$FILE_INI = APP_SourcePath + "test.ini"
-
 Function TBMain()
   
   Print "Testing thinBasic_EnvVar feature set..."
