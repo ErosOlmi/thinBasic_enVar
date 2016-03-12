@@ -20,6 +20,24 @@ FUNCTION EnvironmentVariable_Get( sName AS STRING ) AS STRING
 
 END FUNCTION
 
+FUNCTION EnvironmentVariable_GetItem( sName AS STRING, itemSeparator AS STRING, itemIndex AS LONG ) AS STRING
+
+  LOCAL allItems AS STRING
+  allItems = EnvironmentVariable_Get(sName)
+
+  FUNCTION = PARSE$(allItems, itemSeparator, itemIndex)
+
+END FUNCTION
+
+FUNCTION EnvironmentVariable_GetItemCount( sName AS STRING, itemSeparator AS STRING ) AS LONG
+
+  LOCAL allItems AS STRING
+  allItems = EnvironmentVariable_Get(sName)
+
+  FUNCTION = PARSECOUNT(allItems, itemSeparator)
+
+END FUNCTION
+
 FUNCTION EnvironmentVariable_Exists( sName AS STRING ) AS LONG
 
   FUNCTION = LEN(EnvironmentVariable_Get(sName)) > 0

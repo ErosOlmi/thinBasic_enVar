@@ -8,11 +8,13 @@
 
 FUNCTION Module_LoadSymbols() AS LONG
 
-  thinBasic_LoadSymbol  "EnVar_List"  , %thinBasic_ReturnString  , CODEPTR( Exec_EnVar_List )  , %thinBasic_ForceOverWrite
-  thinBasic_LoadSymbol  "EnVar_Set"   , %thinBasic_ReturnCodeLong, CODEPTR( Exec_EnVar_Set )   , %thinBasic_ForceOverWrite
-  thinBasic_LoadSymbol  "EnVar_Get"   , %thinBasic_ReturnString  , CODEPTR( Exec_EnVar_Get )   , %thinBasic_ForceOverWrite
-  thinBasic_LoadSymbol  "EnVar_Remove", %thinBasic_ReturnCodeLong, CODEPTR( Exec_EnVar_Remove ), %thinBasic_ForceOverWrite
-  thinBasic_LoadSymbol  "EnVar_Exists", %thinBasic_ReturnCodeLong, CODEPTR( Exec_EnVar_Exists ), %thinBasic_ForceOverWrite
+  thinBasic_LoadSymbol  "EnVar_List"        , %thinBasic_ReturnString  , CODEPTR( Exec_EnVar_List )                 , %thinBasic_ForceOverWrite
+  thinBasic_LoadSymbol  "EnVar_Set"         , %thinBasic_ReturnCodeLong, CODEPTR( Exec_EnVar_Set )                  , %thinBasic_ForceOverWrite
+  thinBasic_LoadSymbol  "EnVar_Get"         , %thinBasic_ReturnString  , CODEPTR( Exec_EnVar_Get )                  , %thinBasic_ForceOverWrite
+  thinBasic_LoadSymbol  "EnVar_GetItem"     , %thinBasic_ReturnString  , CODEPTR( Exec_EnVar_GetItem )              , %thinBasic_ForceOverWrite
+  thinBasic_LoadSymbol  "EnVar_GetItemCount", %thinBasic_ReturnCodeLong, CODEPTR( Exec_EnVar_GetItemCount )         , %thinBasic_ForceOverWrite
+  thinBasic_LoadSymbol  "EnVar_Remove"      , %thinBasic_ReturnCodeLong, CODEPTR( Exec_EnVar_Remove )               , %thinBasic_ForceOverWrite
+  thinBasic_LoadSymbol  "EnVar_Exists"      , %thinBasic_ReturnCodeLong, CODEPTR( Exec_EnVar_Exists )               , %thinBasic_ForceOverWrite
 
 END FUNCTION
 
@@ -66,6 +68,54 @@ FUNCTION Exec_EnVar_Get() AS STRING
   IF TryParseSingleStringParameter(varName) THEN
     FUNCTION = EnvironmentVariable_Get(varName)
   END IF
+
+END FUNCTION
+
+FUNCTION Exec_EnVar_GetItem() AS STRING
+
+  REGISTER parensSpecified AS LONG
+
+  LOCAL varName AS STRING
+  LOCAL itemIndex AS LONG
+  LOCAL itemSeparator AS STRING
+
+  parensSpecified = thinBasic_CheckOpenParens_Optional
+  thinBasic_ParseString(varName)
+  IF thinBasic_CheckComma_Mandatory AND thinBasic_ErrorFree THEN
+    thinBasic_ParseString(itemSeparator)
+    IF thinBasic_CheckComma_Mandatory AND thinBasic_ErrorFree THEN
+      itemIndex = thinBasic_Parse1Number
+
+      IF parensSpecified THEN
+        thinBasic_CheckCloseParens_Mandatory
+      END IF
+
+      FUNCTION = EnvironmentVariable_GetItem(varName, itemSeparator, itemIndex)
+
+    END IF
+
+  END IF
+
+END FUNCTION
+
+FUNCTION Exec_EnVar_GetItemCount() AS LONG
+
+  REGISTER parensSpecified AS LONG
+
+  LOCAL varName AS STRING
+  LOCAL itemSeparator AS STRING
+
+  parensSpecified = thinBasic_CheckOpenParens_Optional
+  thinBasic_ParseString(varName)
+  IF thinBasic_CheckComma_Optional AND thinBasic_ErrorFree THEN
+    thinBasic_ParseString(itemSeparator)
+  END IF
+
+  IF parensSpecified THEN
+    thinBasic_CheckCloseParens_Mandatory
+  END IF
+
+  FUNCTION = EnvironmentVariable_GetItemCount(varName, itemSeparator)
 
 END FUNCTION
 

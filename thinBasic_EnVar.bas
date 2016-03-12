@@ -10,19 +10,19 @@
 
 ' -- The version itself should reflect the targetted thinBasic version
 #RESOURCE VERSIONINFO
-#RESOURCE FILEVERSION 1, 9, 16, 0
-#RESOURCE PRODUCTVERSION 1, 9, 16, 0
+#RESOURCE FILEVERSION 1, 9, 16, 1
+#RESOURCE PRODUCTVERSION 1, 9, 16, 1
 
 #RESOURCE STRINGINFO "0409", "04B0"
 
 #RESOURCE VERSION$ "CompanyName",      "Petr Schreiber"
 #RESOURCE VERSION$ "FileDescription",  "Module for Environment Variables handling"
-#RESOURCE VERSION$ "FileVersion",      "1.9.16.0"
+#RESOURCE VERSION$ "FileVersion",      "1.9.16.1"
 #RESOURCE VERSION$ "InternalName",     "EnVars"
 #RESOURCE VERSION$ "OriginalFilename", "ThinBASIC_EnVar.dll"
-#RESOURCE VERSION$ "LegalCopyright",   "Copyright © Petr Schreiber 2015"
+#RESOURCE VERSION$ "LegalCopyright",   "Copyright © Petr Schreiber 2016"
 #RESOURCE VERSION$ "ProductName",      "thinBasic_EnVar"
-#RESOURCE VERSION$ "ProductVersion",   "1.9.16.0"
+#RESOURCE VERSION$ "ProductVersion",   "1.9.16.1"
 #RESOURCE VERSION$ "Comments",         "Support site: http://www.thinbasic.com/"
 
 ' -----------------------------------------------------------------------------

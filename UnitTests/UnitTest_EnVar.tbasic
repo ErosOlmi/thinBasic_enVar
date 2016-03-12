@@ -5,43 +5,54 @@ Uses "Console", "File"
 
 $FILE_INI = APP_SourcePath + "test.ini"
 
-' -- Main body of our testing engine
 Function TBMain()
   
-  ' -- Initialize testing engine
+  Print "Testing thinBasic_EnvVar feature set..."
   ut_Initialize()
- 
-  ' -- Automatically launch all possible tests
-  ut_LaunchTests()      
- 
-  ' -- Report failures found in report, if any
-  Long nFailures = ut_GetFailureCount()
-  Long i
-   
-  If nFailures Then   
-    PrintL  
-     
-    For i = 1 To nFailures
-      PrintL "#"+i
-      PrintL "Test:        " + ut_GetFailureTestName(i)
-      PrintL "Assert:      " + ut_GetFailureAssertType(i)
-      PrintL "Description: " + ut_GetFailureDescription(i)
-      PrintL "Comment:     " + ut_GetFailureComment(i)
-      PrintL
-    Next
-  Else
-    PrintL "PASSED" 
-  End If             
-   
-  ' -- Save results to default file
-  ut_SaveLog()
-   
-  ' -- Release engine
+
+  ut_LaunchTests("")
+  
   ut_Release()
-   
+  
+  If ut_FailCount Then               
+    ut_SaveLog()           
+    PrintL
+    PrintL
+    PrintL "See the following file for all the details:" In 15
+    PrintL ut_logFileName In 14
+    PrintL                     
+    PrintL "Brief overview of " + ut_FailCount + " failures:" In 11
+    PrintUnitTestIssues(ut_logFileName)    
+    
+  Else
+    PrintL "PASSED" In 10  
+  End If  
+  
   WaitKey
- 
-End Function          
+
+End Function
+
+Function PrintUnitTestIssues(sourceFile As String)
+
+  String content = FILE_Load(ut_logFileName)
+  String unitTest, failure
+  
+  Long   issueCount = Grab$(content, "<failCount>", "</failCount>")  
+    
+  Long i
+  For i = 1 To issueCount
+    unitTest = Grab$(content, "<testName>", "</testName>", i)
+    failure  = Grab$(content, "<description>", "</description>", i)
+  
+    PrintL unitTest In 15
+    PrintL failure In 12
+    PrintL
+    
+  Next          
+
+End Function  
+
+' -----------------------------------------------------------------------------
 
 Function test_Teardown()
   enVar_Remove("enVarUnitTest")
@@ -74,6 +85,55 @@ Function test_Get_PairPassed_PairRead()
   ut_assertEqualText(enVar_Get("enVarUnitTest"), "Got saved")
   
 End Function
+
+Function test_GetItem_3ValuesPassed_AllRetrieveable()
+
+  enVar_Set ("enVarUnitTest", "One,Two,Three")
+  ut_assertEqualText("One"  , enVar_GetItem("enVarUnitTest", ",", 1))
+  ut_assertEqualText("Two"  , enVar_GetItem("enVarUnitTest", ",", 2))
+  ut_assertEqualText("Three", enVar_GetItem("enVarUnitTest", ",", 3))
+  
+End Function
+
+Function test_GetItem_3ValuesPassed_AllRetrieveableWithNegativeIndex()
+
+  enVar_Set ("enVarUnitTest", "One,Two,Three")
+  ut_assertEqualText("One"  , enVar_GetItem("enVarUnitTest", ",", -3))
+  ut_assertEqualText("Two"  , enVar_GetItem("enVarUnitTest", ",", -2))
+  ut_assertEqualText("Three", enVar_GetItem("enVarUnitTest", ",", -1))
+    
+End Function
+
+Function test_GetItem_3ValuesPassedEmptySeparatorSpecified_AllRetrievable()
+
+  enVar_Set ("enVarUnitTest", "One,Two,Three")
+  ut_assertEqualText("One"  , enVar_GetItem("enVarUnitTest", "", 1))
+  ut_assertEqualText("Two"  , enVar_GetItem("enVarUnitTest", "", 2))
+  ut_assertEqualText("Three", enVar_GetItem("enVarUnitTest", "", 3))
+    
+End Function
+
+Function test_GetItem_3ValuesPassedRetrieving4th_GotEmptyString()
+
+  enVar_Set ("enVarUnitTest", "One,Two,Three")
+  ut_assertEqualText("", enVar_GetItem("enVarUnitTest", ",", 4))
+  
+End Function
+                                 
+Function test_GetItemCount_3ValuesPassed_CountOf3Detected()
+
+  enVar_Set ("enVarUnitTest", "One,Two,Three")
+  ut_assertEqual(3, enVar_GetItemCount("enVarUnitTest", ","))
+  
+End Function
+
+Function test_GetItemCount_3ValuesPassedNoSeparator_CountOf3Detected()
+
+  enVar_Set ("enVarUnitTest", "One,Two,Three")
+  ut_assertEqual(3, enVar_GetItemCount("enVarUnitTest"))
+  
+End Function
+
 
 Function test_Remove_FirstPassed_NoLongerPresent()
   
