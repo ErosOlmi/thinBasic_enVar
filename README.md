@@ -1,7 +1,7 @@
 thinBasic_EnVar
 ===============
 
-Module for ThinBASIC enabling easy environment variable management.
+Module for ThinBASIC Programming Language enabling easy environment variable management.
 
 Please see the documentation at [Wiki](https://github.com/petrSchreiber/thinBasic_enVar/wiki)
 
